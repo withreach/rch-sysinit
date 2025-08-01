@@ -73,3 +73,11 @@ uv pip install -r requirements.txt
 
 #mise trust -a
 ansible-playbook playbook.yml -K
+
+# hosts=(admin checkout reports stash redirect)
+# target_ip=127.0.0.1
+# for host in "${hosts[@]}"; do
+#   if ! grep -qE "^\s*${target_ip}\s+${host}(\s|$)" /etc/hosts; then
+#     echo -e "${target_ip}\t${host}" | sudo tee -a /etc/hosts >/dev/null
+#   fi
+# done
