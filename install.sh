@@ -68,8 +68,8 @@ else
   git clone -b main --single-branch $repository "$sysinit_path"
 fi
 
-uv pip install -r "$script_dir/requirements.txt"
+cd "${sysinit_path}" || exit 1
+uv pip install -r requirements.txt
 
-#cd "${sysinit_path}" || exit 1
 #mise trust -a
 ansible-playbook playbook.yml -K
