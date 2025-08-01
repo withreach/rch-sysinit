@@ -1,9 +1,9 @@
 #!/bin/bash
 
 script_dir="$(dirname "$(realpath "$0")")"
-sysinit_path="$HOME/sysinit"
+sysinit_path="$HOME/rch-sysinit"
 packages="curl git gpg"
-repository=https://github.com/withreach/sysinit.git
+repository=https://github.com/withreach/rch-sysinit.git
 
 trap cleanup ERR EXIT
 
@@ -62,11 +62,11 @@ uv venv --clear "$HOME/.venv/sysinit"
 #fi
 source "$HOME/.venv/sysinit/bin/activate"
 
-# if [ -d "${sysinit_path}" ] && [ -d "${sysinit_path}/.git" ]; then
-#   git -C "${sysinit_path}" pull
-# else
-#   git clone -b main --single-branch $repository "$sysinit_path"
-# fi
+if [ -d "${sysinit_path}" ] && [ -d "${sysinit_path}/.git" ]; then
+  git -C "${sysinit_path}" pull
+else
+  git clone -b main --single-branch $repository "$sysinit_path"
+fi
 
 uv pip install -r "$script_dir/requirements.txt"
 
