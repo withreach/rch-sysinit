@@ -1,0 +1,16 @@
+---
+packages:
+  - clang
+  - docker
+  - docker-buildx
+  - gnome-keyring
+  - libxcrypt-compat
+  - seahorse
+
+aur_packages:
+  - 1password
+  - aws-session-manager-plugin
+  - slack-desktop
+
+tools:
+  - mise

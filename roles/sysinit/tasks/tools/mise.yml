@@ -1,0 +1,45 @@
+---
+- name: Mise - Exists
+  ansible.builtin.stat:
+    path: "/home/{{ lookup('env','USER') }}/.local/bin/mise"
+  register: mise_exists_result
+
+- block:
+    - name: Mise - Bin directory exists
+      ansible.builtin.file:
+        path: "/home/{{ lookup('env','USER') }}/.local/bin"
+        state: directory
+
+    - name: Mise - Install/Upgrade
+      ansible.builtin.get_url:
+        url: https://mise.jdx.dev/mise-latest-linux-x64
+        dest: "/home/{{ lookup('env','USER') }}/.local/bin/mise"
+        mode: +x
+
+    - name: Mise - set binary
+      ansible.builtin.set_fact:
+        mise_bin: "/home/{{ lookup('env','USER') }}/.local/bin/mise"
+  become_user: "{{ lookup('env','USER') }}"   
+  when: mise_exists_result.stat.exists == false or upgrade == true
+
+- name: Mise - Install/Upgrade
+  block:
+    - name: Mise - Install Plugins
+      ansible.builtin.shell: >
+        {{ mise_bin }} plugin add {{ plugin_item.plugin }} {{ plugin_item.src }}
+      loop_control:
+        loop_var: plugin_item
+      loop: "{{ mise_custom_plugins }}"
+      when: mise_custom_plugins && mise_custom_plugins | length > 0
+
+    - name: Mise - Install Plugins
+      ansible.builtin.shell: >
+        if [ ! -d "$HOME/.local/share/mise/plugins/{{ plugin_item }}" ]; then
+          {{ mise_bin }} use -g -y {{ plugin_item }}
+        fi
+      loop_control:
+        loop_var: plugin_item
+      loop: "{{ mise_plugins }}"
+      when: mise_plugins and mise_plugins | length > 0
+  become_user: "{{ lookup('env','USER') }}"
+  when: mise_bin
