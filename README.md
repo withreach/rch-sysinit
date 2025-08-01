@@ -17,17 +17,12 @@ This release has been tested on the following distributions, and should work on 
 Open a terminal and run one of the following:
 
 ```bash
-wget -O - https://bit.ly/_sysinit | bash
+wget -O - https://github.com/withreach/rch-sysinit/blob/main/install.sh | bash
 ```
-
-```bash
-wget -O - https://links.kevinedwards.ca/sysinit | bash
-```
-
 Alternatively if you want to audit the script clone the repo, and run the install.sh script:
 
 ```bash
-git clone https://github.com/withreach/sysinit.git
-cd sysinit
+git clone https://github.com/withreach/rch-sysinit.git
+cd rch-sysinit
 ./install.sh
 ```
