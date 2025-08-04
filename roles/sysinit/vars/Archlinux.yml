@@ -6,6 +6,7 @@ sysinit_packages:
   - gnome-keyring
   - libxcrypt-compat
   - seahorse
+  - starship
 
 sysinit_aur_packages:
   - 1password
