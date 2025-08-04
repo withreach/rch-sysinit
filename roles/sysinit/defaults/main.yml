@@ -1,5 +1,5 @@
 ---
-mise_plugins:
+sysinit_mise_plugins:
   - 1password-cli
   - amazon-ecr-credential-helper
   - awscli
@@ -11,4 +11,20 @@ mise_plugins:
   - usage
 
 # Custom plugins with specific sources
-mise_custom_plugins: []
+sysinit_mise_custom_plugins: []
+
+# Checksums for tools (fallback values)
+# These are used as fallbacks when runtime checksum fetching fails
+# Most tools now calculate checksums at runtime, but these provide safety nets
+sysinit_tool_checksums:
+  # Starship install script - fallback only (runtime checksum preferred)
+  # Update manually if https://starship.rs/install.sh.sha256 is unavailable
+  starship_install_script: "sha256:placeholder"  # Replace with actual checksum when needed
+
+  # Docker bash completion - calculated at runtime
+  # This is calculated dynamically, placeholder not used in normal operation
+  docker_completion: "sha256:placeholder"
+
+  # Mise - fetched from https://mise.jdx.dev/mise-latest-linux-x64.sha256 at runtime
+  # This is a fallback if the remote checksum file is unavailable
+  mise_linux_x64: "sha256:placeholder"

@@ -1,5 +1,5 @@
 ---
-packages:
+sysinit_packages:
   - clang
   - docker
   - docker-buildx
@@ -7,10 +7,10 @@ packages:
   - libxcrypt-compat
   - seahorse
 
-aur_packages:
+sysinit_aur_packages:
   - 1password
   - aws-session-manager-plugin
   - slack-desktop
 
-tools:
+sysinit_tools:
   - mise

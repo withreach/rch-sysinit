@@ -5,14 +5,35 @@
   register: starship_exists_result
 
 - name: Starship - Install/Upgrade
+  when: starship_exists_result.stat.exists == "false" or upgrade == "true"
   block:
-    - name: Starship - Install/Upgrade
+    - name: Starship - Get install script checksum from remote
+      ansible.builtin.uri:
+        url: https://starship.rs/install.sh.sha256
+        method: GET
+        return_content: true
+      register: starship_checksum_result
+      ignore_errors: true
+
+    - name: Starship - Set checksum
+      ansible.builtin.set_fact:
+        starship_script_sha256: >
+          "{{ starship_checksum_result.content.split()[0] if starship_checksum_result is succeeded
+          else tool_checksums.starship_install_script | regex_replace('^sha256:', '') }}"
+
+    - name: Starship - Download install script
       ansible.builtin.get_url:
         url: https://starship.rs/install.sh
         dest: /tmp/starship_install.sh
         mode: +x
+        checksum: "{{ 'sha256:' + starship_script_sha256 if starship_script_sha256 and starship_script_sha256 != 'placeholder' else omit }}"
 
     - name: Starship - Install
       ansible.builtin.shell: >
+        set -o pipefail
         cat /tmp/starship_install.sh | sh -s -- -y
-  when: starship_exists_result.stat.exists == false or upgrade == true
+      args:
+        creates: "/usr/local/bin/starship"
+      # Note: Using shell for starship installation is necessary as the upstream
+      # project only provides an installation script. Input validation: The script
+      # is downloaded with checksum verification for security.

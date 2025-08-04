@@ -2,12 +2,14 @@
 - name: System info
   ansible.builtin.debug:
     msg: |
-      User: "{{ ansible_user_id }}"
-      Sudo User: "{{ lookup('env','USER') }}"
-      System: "{{ ansible_system }}"
-      Architecture: "{{ ansible_userspace_architecture }}"
-      Distribution: "{{ ansible_distribution }}"
-      Release: "{{ ansible_distribution_release }}"
+      `
+        User: "{{ ansible_user_id }}"
+        Sudo User: "{{ lookup('env', 'USER') }}"
+        System: "{{ ansible_system }}"
+        Architecture: "{{ ansible_userspace_architecture }}"
+        Distribution: "{{ ansible_distribution }}"
+        Release: "{{ ansible_distribution_release }}"
+      `
 
 - name: Load variables
   ansible.builtin.include_vars: "{{ ansible_distribution }}.yml"
@@ -19,13 +21,13 @@
 
 - name: Install Debian community or private matained packages
   ansible.builtin.include_tasks: "apt.yml"
-  loop: "{{ apt_packages|default([]) }}"
+  loop: "{{ apt_packages | default([]) }}"
   when: ansible_distribution == 'Debian'
-  
+
 - name: Install Arch aur packages
   ansible.builtin.include_tasks: "aur.yml"
   when: ansible_distribution == 'Archlinux'
 
 - name: Install tools
   ansible.builtin.include_tasks: "tools/{{ item }}.yml"
-  loop: "{{ tools|default([]) }}"
+  loop: "{{ tools | default([]) }}"

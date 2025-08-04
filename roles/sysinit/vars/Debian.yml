@@ -1,5 +1,5 @@
 ---
-packages:
+sysinit_packages:
   - apt-transport-https
   - blueman
   - bluetooth
@@ -22,7 +22,7 @@ packages:
   - xz-utils
   - zlib1g-dev
 
-tools:
+sysinit_tools:
   - aws-ssm
   - docker
   - mise

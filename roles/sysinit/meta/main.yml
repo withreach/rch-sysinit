@@ -1,4 +1,6 @@
 galaxy_info:
+  role_name: sysinit
+  namespace: withreach
   author: Reach Devops
   description: System initialization.
   company: Reach Ltd.
@@ -16,7 +18,7 @@ galaxy_info:
   # - CC-BY
   license: MIT
 
-  min_ansible_version: 2.13
+  min_ansible_version: "2.13"
 
   # If this a Container Enabled role, provide the minimum Ansible Container version.
   # min_ansible_container_version:
@@ -28,29 +30,6 @@ galaxy_info:
   # branch will be accepted. Otherwise, in all cases, the repo's default branch
   # (usually master) will be used.
   github_branch: main
-
-  #
-  # Provide a list of supported platforms, and for each platform a list of versions.
-  # If you don't wish to enumerate all versions for a particular platform, use 'all'.
-  # To view available platforms and versions (or releases), visit:
-  # https://galaxy.ansible.com/api/v1/platforms/
-  #
-  platforms:
-    - name: Arch
-      versions:
-        - all
-    - name: Debian
-      versions:
-        - all
-    - name: Fedora
-      versions:
-        - all
-    - name: Redhat
-      versions:
-        - all
-    - name: Ubuntu
-      versions:
-        - all
 
   galaxy_tags:
     - system

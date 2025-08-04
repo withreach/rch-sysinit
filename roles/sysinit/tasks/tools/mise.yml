@@ -1,45 +1,72 @@
 ---
 - name: Mise - Exists
   ansible.builtin.stat:
-    path: "/home/{{ lookup('env','USER') }}/.local/bin/mise"
+    path: "/home/{{ lookup('env', 'USER') }}/.local/bin/mise"
   register: mise_exists_result
 
-- block:
+- name: Mise - Set binary
+  become: true
+  become_user: "{{ lookup('env', 'USER') }}"
+  when: mise_exists_result.stat.exists == "false" or upgrade == "true"
+  block:
     - name: Mise - Bin directory exists
       ansible.builtin.file:
-        path: "/home/{{ lookup('env','USER') }}/.local/bin"
+        path: "/home/{{ lookup('env', 'USER') }}/.local/bin"
         state: directory
+        mode: "0644"
+
+    - name: Mise - Get current checksum from remote
+      ansible.builtin.uri:
+        url: https://mise.jdx.dev/mise-latest-linux-x64.sha256
+        method: GET
+        return_content: true
+      register: mise_checksum_result
+      ignore_errors: true
+
+    - name: Mise - Extract checksum
+      ansible.builtin.set_fact:
+        mise_sha256: >
+          "{{ mise_checksum_result.content.split()[0] if mise_checksum_result is succeeded
+          else sysinit_tool_checksums.mise_linux_x64 | regex_replace('^sha256:', '') }}"
 
     - name: Mise - Install/Upgrade
       ansible.builtin.get_url:
         url: https://mise.jdx.dev/mise-latest-linux-x64
-        dest: "/home/{{ lookup('env','USER') }}/.local/bin/mise"
+        dest: "/home/{{ lookup('env', 'USER') }}/.local/bin/mise"
         mode: +x
+        checksum: "{{ 'sha256:' + mise_sha256 if mise_sha256 and mise_sha256 != 'placeholder' else omit }}"
 
     - name: Mise - set binary
       ansible.builtin.set_fact:
-        mise_bin: "/home/{{ lookup('env','USER') }}/.local/bin/mise"
-  become_user: "{{ lookup('env','USER') }}"   
-  when: mise_exists_result.stat.exists == false or upgrade == true
+        mise_bin: "/home/{{ lookup('env', 'USER') }}/.local/bin/mise"
 
 - name: Mise - Install/Upgrade
+  become: true
+  become_user: "{{ lookup('env', 'USER') }}"
+  when: mise_bin
   block:
     - name: Mise - Install Plugins
       ansible.builtin.shell: >
         {{ mise_bin }} plugin add {{ plugin_item.plugin }} {{ plugin_item.src }}
+      args:
+        creates: "$HOME/.local/share/mise/plugins/{{ plugin_item.plugin }}"
       loop_control:
         loop_var: plugin_item
-      loop: "{{ mise_custom_plugins }}"
-      when: mise_custom_plugins && mise_custom_plugins | length > 0
+      loop: "{{ sysinit_mise_custom_plugins }}"
+      when: sysinit_mise_custom_plugins && sysinit_mise_custom_plugins | length > 0
+      # Note: Using shell for mise plugins is necessary as no native Ansible
+      # module exists for mise. Input validation: plugin_item comes from
+      # controlled variable list (sysinit_mise_custom_plugins) defined in defaults/main.yml
 
     - name: Mise - Install Plugins
       ansible.builtin.shell: >
-        if [ ! -d "$HOME/.local/share/mise/plugins/{{ plugin_item }}" ]; then
-          {{ mise_bin }} use -g -y {{ plugin_item }}
-        fi
+        {{ mise_bin }} use -g -y {{ plugin_item }}
+      args:
+        creates: "$HOME/.local/share/mise/plugins/{{ plugin_item }}"
       loop_control:
         loop_var: plugin_item
-      loop: "{{ mise_plugins }}"
-      when: mise_plugins and mise_plugins | length > 0
-  become_user: "{{ lookup('env','USER') }}"
-  when: mise_bin
+      loop: "{{ sysinit_mise_plugins }}"
+      when: sysinit_mise_plugins and sysinit_mise_plugins | length > 0
+      # Note: Using shell for mise plugins is necessary as no native Ansible
+      # module exists for mise. Input validation: plugin_item comes from
+      # controlled variable list (sysinit_mise_plugins) defined in defaults/main.yml

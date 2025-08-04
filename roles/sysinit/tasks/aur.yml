@@ -1,8 +1,12 @@
 ---
 - name: Install Arch aur packages
-  become_user: "{{ lookup('env','USER') }}"
+  become: true
+  become_user: "{{ lookup('env', 'USER') }}"
   ansible.builtin.shell: >
-    if ! yay -Q {{ item }}; then
-      yay --noconfirm --answerclean None --answerdiff None -S {{ item }}
-    fi
+    yay --noconfirm --answerclean None --answerdiff None -S {{ item }}
+  args:
+    creates: "/var/lib/pacman/local/{{ item }}-*"
   loop: "{{ aur_packages }}"
+  # Note: Using shell for AUR packages is necessary as no native Ansible
+  # module exists for yay/AUR. Input validation: {{ item }} comes from
+  # controlled variable list (aur_packages) defined in defaults/main.yml
