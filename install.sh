@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+script_dir="$(dirname "$(realpath "$0")")"
 sysinit_path="$HOME/sysinit"
 packages="curl file git gpg"
 repository=https://github.com/withreach/rch-sysinit.git
@@ -10,9 +11,7 @@ trap cleanup ERR EXIT
 
 cleanup() {
   # Clean up temporary files
-  if [ -n "$mise_installer" ] && [ -f "$mise_installer" ]; then
-    rm -f "$mise_installer"
-  fi
+  rm -f "$script_dir/mise_install.sh"
 
   if command -v deactivate >/dev/null; then
     deactivate
@@ -56,8 +55,8 @@ esac
 
 # Install mise
 gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys 0x7413A06D
-curl https://mise.jdx.dev/install.sh.sig | gpg --decrypt >install.sh
-sh ./install.sh
+curl https://mise.jdx.dev/install.sh.sig | gpg --decrypt >"$script_dir/mise_install.sh"
+sh "$script_dir/mise_install.sh"
 
 # Add mise to PATH and activate it
 export PATH="$HOME/.local/bin:$PATH"
