@@ -3,19 +3,16 @@
 set -euo pipefail
 
 script_dir="$(dirname "$(realpath "$0")")"
-sysinit_path="$HOME/sysinit"
 packages="curl file git gpg"
-repository=https://github.com/withreach/rch-sysinit.git
 
 trap cleanup ERR EXIT
 
 cleanup() {
-  # Clean up temporary files
-  rm -f "$script_dir/mise_install.sh"
-
   if command -v deactivate >/dev/null; then
     deactivate
   fi
+  sudo rm -rf "$script_dir/.venv"
+  rm -f "$script_dir/mise_install.sh"
 }
 
 function getPackageManager() {
@@ -65,18 +62,10 @@ eval "$("$HOME"/.local/bin/mise activate bash)"
 
 # Install uv via mise
 mise use --global uv
-uv venv --clear "$HOME/.venv/sysinit"
-source "$HOME/.venv/sysinit/bin/activate"
-
-if [ -d "${sysinit_path}" ] && [ -d "${sysinit_path}/.git" ]; then
-  git -C "${sysinit_path}" pull
-else
-  git clone -b main --single-branch $repository "$sysinit_path"
-fi
-
-cd "${sysinit_path}" || exit 1
+uv venv --clear
+source .venv/bin/activate
 mise trust -a
-uv pip install -r requirements.txt
+uv pip install --group dev
 
 ansible-playbook playbook.yml -K
 
