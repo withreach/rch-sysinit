@@ -14,57 +14,9 @@ This release has been tested on the following distributions, and should work on 
 
 ## Quick Start
 
-### Recommended Installation (Two-Step Process)
+### Recommended Installation: Clone Repository
 
-For security best practices, we recommend downloading and reviewing the installation script before execution:
-
-1. **Download the installation script:**
-   ```bash
-   # Download from the latest release (recommended)
-   wget https://github.com/withreach/rch-sysinit/releases/latest/download/install.sh
-
-   # Or download from the main branch
-   wget https://raw.githubusercontent.com/withreach/rch-sysinit/main/install.sh
-   ```
-
-2. **Review and execute the script:**
-   ```bash
-   # Review the script contents
-   less install.sh
-
-   # Make executable and run
-   chmod +x install.sh
-   ./install.sh
-   ```
-
-### Security Verification (Optional)
-
-For enhanced security, you can verify the integrity of the installation script:
-
-#### Checksum Verification
-```bash
-# Download the checksum file (when available)
-wget https://github.com/withreach/rch-sysinit/releases/latest/download/install.sh.sha256
-
-# Verify the checksum
-sha256sum -c install.sh.sha256
-```
-
-#### GPG Signature Verification
-```bash
-# Download the GPG signature (when available)
-wget https://github.com/withreach/rch-sysinit/releases/latest/download/install.sh.sig
-
-# Import the signing key (replace with actual key ID)
-# gpg --keyserver keyserver.ubuntu.com --recv-keys <KEY_ID>
-
-# Verify the signature
-# gpg --verify install.sh.sig install.sh
-```
-
-### Alternative: Clone Repository
-
-You can also clone the entire repository to review all files:
+Clone the entire repository to review all files:
 
 ```bash
 git clone https://github.com/withreach/rch-sysinit.git
