@@ -24,10 +24,6 @@ cd rch-sysinit
 ./install.sh
 ```
 
-### ⚠️ Security Warning
-
-**We strongly discourage piping scripts directly to bash** (e.g., `curl | bash` or `wget | bash`) as this prevents you from reviewing the code before execution. Always download, review, and then execute installation scripts.
-
 ## Configuration
 
 ### GitHub Token
