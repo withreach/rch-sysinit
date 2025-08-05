@@ -1,6 +1,6 @@
 ---
 - name: System Initialization
-  hosts: "{{ host | default('localhost') }}"
+  hosts: "{{ host | default('local-dev') }}"
   become: true
   gather_facts: true
   vars:
